@@ -1,53 +1,10 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-
-import { z } from "zod";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-
-const schema = z.object({
-  name: z.string().min(2),
-
-  email: z.string().email(),
-
-  company: z.string().optional(),
-
-  message: z.string().min(10),
-});
-
-type FormData = z.infer<typeof schema>;
-
 export function ContactForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-  });
-
-  const onSubmit = async (
-    data: FormData
-  ) => {
-    const response = await fetch("/api/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (response.ok) {
-      alert("Inquiry submitted successfully.");
-    } else {
-      alert("Something went wrong.");
-    }
-  };
-
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      action="https://formsubmit.co/YOUR_EMAIL@gmail.com"
+      method="POST"
       className="
         rounded-[36px]
         border
@@ -58,6 +15,14 @@ export function ContactForm() {
         lg:p-10
       "
     >
+
+      {/* HIDDEN */}
+      <input
+        type="hidden"
+        name="_captcha"
+        value="false"
+      />
+
       <div className="grid gap-6 md:grid-cols-2">
 
         {/* NAME */}
@@ -68,7 +33,9 @@ export function ContactForm() {
           </label>
 
           <input
-            {...register("name")}
+            type="text"
+            name="name"
+            required
             placeholder="John Carter"
             className="
               mt-3
@@ -83,12 +50,6 @@ export function ContactForm() {
             "
           />
 
-          {errors.name && (
-            <p className="mt-2 text-sm text-red-500">
-              Please enter your name.
-            </p>
-          )}
-
         </div>
 
         {/* EMAIL */}
@@ -99,7 +60,9 @@ export function ContactForm() {
           </label>
 
           <input
-            {...register("email")}
+            type="email"
+            name="email"
+            required
             placeholder="hello@company.com"
             className="
               mt-3
@@ -114,12 +77,6 @@ export function ContactForm() {
             "
           />
 
-          {errors.email && (
-            <p className="mt-2 text-sm text-red-500">
-              Please enter valid email.
-            </p>
-          )}
-
         </div>
 
       </div>
@@ -132,7 +89,8 @@ export function ContactForm() {
         </label>
 
         <input
-          {...register("company")}
+          type="text"
+          name="company"
           placeholder="Your Company"
           className="
             mt-3
@@ -157,7 +115,8 @@ export function ContactForm() {
         </label>
 
         <textarea
-          {...register("message")}
+          name="message"
+          required
           placeholder="Tell us about your project..."
           className="
             mt-3
@@ -172,17 +131,11 @@ export function ContactForm() {
           "
         />
 
-        {errors.message && (
-          <p className="mt-2 text-sm text-red-500">
-            Please add more details.
-          </p>
-        )}
-
       </div>
 
-      {/* CTA */}
+      {/* BUTTON */}
       <button
-        disabled={isSubmitting}
+        type="submit"
         className="
           mt-8
           rounded-full
@@ -196,9 +149,7 @@ export function ContactForm() {
           text-white
         "
       >
-        {isSubmitting
-          ? "Submitting..."
-          : "Send Inquiry"}
+        Send Inquiry
       </button>
 
     </form>
