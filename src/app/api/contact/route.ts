@@ -1,60 +1,33 @@
 import { NextResponse } from "next/server";
-
 import { Resend } from "resend";
 
-const resend = new Resend(
-  process.env.RESEND_API_KEY
-);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
-  try {
-    const body = await req.json();
+	try {
+		const body = await req.json();
 
-    const {
-      name,
-      email,
-      company,
-      message,
-    } = body;
+		const { name, email, message } = body;
 
-    await resend.emails.send({
-      from:
-        "WebApp Innovators <onboarding@resend.dev>",
+		const data = await resend.emails.send({
+			from: "onboarding@resend.dev",
+			to: "your@email.com",
+			subject: `New Contact from ${name}`,
+			html: `
+        <h2>New Contact Form Submission</h2>
 
-      to:
-        process.env.CONTACT_EMAIL || "",
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Message:</strong></p>
 
-      subject:
-        `New Inquiry from ${name}`,
-
-      html: `
-        <div style="font-family:Arial;padding:24px">
-          <h2>New Project Inquiry</h2>
-
-          <p><strong>Name:</strong> ${name}</p>
-
-          <p><strong>Email:</strong> ${email}</p>
-
-          <p><strong>Company:</strong> ${company}</p>
-
-          <p><strong>Message:</strong></p>
-
-          <p>${message}</p>
-        </div>
+        <p>${message}</p>
       `,
-    });
+		});
 
-    return NextResponse.json({
-      success: true,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-      },
-      {
-        status: 500,
-      }
-    );
-  }
+		return NextResponse.json(data);
+	} catch (error) {
+		console.error(error);
+
+		return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+	}
 }
