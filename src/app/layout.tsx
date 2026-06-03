@@ -4,7 +4,6 @@ import { Inter, Inter_Tight } from "next/font/google";
 
 import "./globals.css";
 
-import { Analytics } from "@vercel/analytics/react";
 
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 
@@ -41,7 +40,6 @@ export default function RootLayout({
           {children}
         </SmoothScrollProvider>
 
-        <Analytics />
       </body>
     </html>
   );
